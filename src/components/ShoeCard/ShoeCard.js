@@ -1,9 +1,9 @@
-import React from 'react';
-import styled from 'styled-components/macro';
+import React from "react";
+import styled from "styled-components/macro";
 
-import { COLORS, WEIGHTS } from '../../constants';
-import { formatPrice, pluralize, isNewShoe } from '../../utils';
-import Spacer from '../Spacer';
+import { COLORS, WEIGHTS } from "../../constants";
+import { formatPrice, pluralize, isNewShoe } from "../../utils";
+import Spacer from "../Spacer";
 
 const ShoeCard = ({
   slug,
@@ -35,15 +35,24 @@ const ShoeCard = ({
     <Link href={`/shoe/${slug}`}>
       <Wrapper>
         <ImageWrapper>
+          {variant === "on-sale" && (
+            <InfoFlag className={variant}>Sale</InfoFlag>
+          )}
+          {variant === "new-release" && (
+            <InfoFlag className={variant}>Just released!</InfoFlag>
+          )}
           <Image alt="" src={imageSrc} />
         </ImageWrapper>
         <Spacer size={12} />
         <Row>
           <Name>{name}</Name>
-          <Price>{formatPrice(price)}</Price>
+          <Price className={variant}>{formatPrice(price)}</Price>
         </Row>
         <Row>
-          <ColorInfo>{pluralize('Color', numOfColors)}</ColorInfo>
+          <ColorInfo>{pluralize("Color", numOfColors)}</ColorInfo>
+          {variant === "on-sale" && (
+            <SalePrice>{formatPrice(salePrice)}</SalePrice>
+          )}
         </Row>
       </Wrapper>
     </Link>
@@ -58,12 +67,40 @@ const Link = styled.a`
 const Wrapper = styled.article``;
 
 const ImageWrapper = styled.div`
+  border-radius: 16px 16px 4px 4px;
   position: relative;
 `;
 
-const Image = styled.img``;
+const InfoFlag = styled.div`
+  border-radius: 2px;
+  color: ${COLORS.white};
+  font-size: ${14 / 16}rem;
+  font-weight: ${WEIGHTS.bold};
+  padding: 7px 9px 9px;
+  position: absolute;
+  top: 12px;
+  right: -4px;
+
+  &.on-sale {
+    background-color: ${COLORS.primary};
+    padding-left: 10px;
+  }
+
+  &.new-release {
+    background-color: ${COLORS.secondary};
+    padding-left: 11px;
+  }
+`;
+
+const Image = styled.img`
+  border-radius: 16px 16px 4px 4px;
+  width: 100%;
+`;
 
 const Row = styled.div`
+  display: flex;
+  justify-content: space-between;
+
   font-size: 1rem;
 `;
 
@@ -72,7 +109,15 @@ const Name = styled.h3`
   color: ${COLORS.gray[900]};
 `;
 
-const Price = styled.span``;
+const Price = styled.span`
+  font-weight: ${WEIGHTS.normal};
+  color: ${COLORS.gray[900]};
+
+  &.on-sale {
+    color: ${COLORS.gray[700]};
+    text-decoration-line: line-through;
+  }
+`;
 
 const ColorInfo = styled.p`
   color: ${COLORS.gray[700]};
